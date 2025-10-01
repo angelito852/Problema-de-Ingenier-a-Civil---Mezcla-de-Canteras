@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solución - Problema de Mezcla de Canteras</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --neon-blue: #0ff0fc;
+            --neon-pink: #ff00ff;
+            --neon-green: #39ff14;
+            --neon-purple: #bf00ff;
+            --dark-bg: #0a0a16;
+            --darker-bg: #050510;
+            --card-bg: rgba(15, 15, 35, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(15, 15, 35, 0.8) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(15, 15, 35, 0.6) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue);
+            color: #fff;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--neon-green);
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        .neon-border {
+            border: 2px solid var(--neon-blue);
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--neon-blue), inset 0 0 10px rgba(15, 240, 252, 0.2);
+            padding: 20px;
+            margin: 20px 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(5px);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(15, 240, 252, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-blue), 0 0 30px rgba(15, 240, 252, 0.4);
+        }
+        
+        h2 {
+            color: var(--neon-pink);
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--neon-pink);
+            border-bottom: 1px solid var(--neon-pink);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--neon-green);
+            margin: 15px 0 10px;
+            text-shadow: 0 0 3px var(--neon-green);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        th {
+            background: rgba(15, 240, 252, 0.2);
+            color: var(--neon-blue);
+        }
+        
+        .highlight {
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        
+        .solution-box {
+            background: rgba(57, 255, 20, 0.1);
+            border-left: 4px solid var(--neon-green);
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 5px;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .graph-container {
+            width: 100%;
+            height: 500px;
+            margin: 30px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid rgba(15, 240, 252, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .neon-text {
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .flex-item {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .flex-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Problema de Ingeniería Civil</h1>
+            <p class="subtitle">Solución del sistema de ecuaciones para mezcla de materiales de canteras</p>
+        </header>
+        
+        <div class="neon-border">
+            <div class="card">
+                <h2>Planteamiento del Problema</h2>
+                <p>Un ingeniero civil requiere los siguientes materiales para una obra:</p>
+                
+                <ul>
+                    <li><span class="highlight">4,800 m³</span> de arena</li>
+                    <li><span class="highlight">5,810 m³</span> de grano fino</li>
+                    <li><span class="highlight">5,690 m³</span> de grano grueso</li>
+                </ul>
+                
+                <p>Existen tres canteras con diferentes composiciones de materiales:</p>
+                
+                <table>
+                    <tr>
+                        <th>Cantera</th>
+                        <th>Arena (%)</th>
+                        <th>Grano Fino (%)</th>
+                        <th>Grano Grueso (%)</th>
+                    </tr>
+                    <tr>
+                        <td>Cantera 1</td>
+                        <td>52%</td>
+                        <td>30%</td>
+                        <td>18%</td>
+                    </tr>
+                    <tr>
+                        <td>Cantera 2</td>
+                        <td>20%</td>
+                        <td>50%</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td>Cantera 3</td>
+                        <td>25%</td>
+                        <td>20%</td>
+                        <td>55%</td>
+                    </tr>
+                </table>
+                
+                <p>Se necesita determinar cuántos metros cúbicos se deben extraer de cada cantera para cumplir con los requerimientos.</p>
+            </div>
+        </div>
+        
+        <div class="flex-container">
+            <div class="flex-item">
+                <div class="card">
+                    <h2>Sistema de Ecuaciones</h2>
+                    <p>Definimos las variables:</p>
+                    <ul>
+                        <li><span class="highlight">x₁</span>: metros cúbicos de Cantera 1</li>
+                        <li><span class="highlight">x₂</span>: metros cúbicos de Cantera 2</li>
+                        <li><span class="highlight">x₃</span>: metros cúbicos de Cantera 3</li>
+                    </ul>
+                    
+                    <p>El sistema de ecuaciones queda:</p>
+                    
+                    <div class="solution-box">
+                        <p>0.52x₁ + 0.20x₂ + 0.25x₃ = 4800</p>
+                        <p>0.30x₁ + 0.50x₂ + 0.20x₃ = 5810</p>
+                        <p>0.18x₁ + 0.30x₂ + 0.55x₃ = 5690</p>
+                    </div>
+                    
+                    <p>Multiplicando por 100 para eliminar decimales:</p>
+                    
+                    <div class="solution-box">
+                        <p>52x₁ + 20x₂ + 25x₃ = 480,000</p>
+                        <p>30x₁ + 50x₂ + 20x₃ = 581,000</p>
+                        <p>18x₁ + 30x₂ + 55x₃ = 569,000</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-item">
+                <div class="card">
+                    <h2>Solución del Sistema</h2>
+                    <p>Resolviendo el sistema mediante el método de matrices:</p>
+                    
+                    <div class="solution-box">
+                        <h3>Resultados:</h3>
+                        <p>Cantera 1 (x₁): <span class="highlight">4,011.63 m³</span></p>
+                        <p>Cantera 2 (x₂): <span class="highlight">7,162.79 m³</span></p>
+                        <p>Cantera 3 (x₃): <span class="highlight">5,125.58 m³</span></p>
+                    </div>
+                    
+                    <h3>Verificación:</h3>
+                    <p>Arena: 0.52×4011.63 + 0.20×7162.79 + 0.25×5125.58 = 4,800 m³ ✓</p>
+                    <p>Grano fino: 0.30×4011.63 + 0.50×7162.79 + 0.20×5125.58 = 5,810 m³ ✓</p>
+                    <p>Grano grueso: 0.18×4011.63 + 0.30×7162.79 + 0.55×5125.58 = 5,690 m³ ✓</p>
+                    
+                    <p>Total de material extraído: <span class="highlight">16,300 m³</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Interpretación Gráfica en 3D</h2>
+            <p>El siguiente gráfico muestra los tres planos que representan las ecuaciones y su punto de intersección (solución del sistema):</p>
+            
+            <div id="plot3d" class="graph-container"></div>
+            
+            <p>El punto de intersección de los tres planos representa la solución única del sistema, que indica la cantidad exacta de material que se debe extraer de cada cantera.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Distribución de Materiales por Cantera</h2>
+            <div id="plotPie" class="graph-container"></div>
+        </div>
+        
+        <div class="flex-container">
+            <div class="flex-item">
+                <div class="card">
+                    <h2>Métodos de Solución</h2>
+                    <h3>Método de Matrices</h3>
+                    <p>Se utiliza la fórmula X = A⁻¹B, donde:</p>
+                    <ul>
+                        <li>A es la matriz de coeficientes</li>
+                        <li>B es el vector de términos independientes</li>
+                        <li>X es el vector solución</li>
+                    </ul>
+                    
+                    <h3>Método de Eliminación de Gauss</h3>
+                    <p>Se transforma la matriz aumentada [A|B] a forma escalonada mediante operaciones elementales de fila.</p>
+                    
+                    <h3>Método de Jacobi</h3>
+                    <p>Método iterativo que puede aplicarse cuando la matriz es diagonalmente dominante.</p>
+                </div>
+            </div>
+            
+            <div class="flex-item">
+                <div class="card">
+                    <h2>Aplicación en Ingeniería Civil</h2>
+                    <p>Este tipo de problemas es común en:</p>
+                    <ul>
+                        <li>Optimización de recursos en construcción</li>
+                        <li>Mezcla de materiales para hormigón</li>
+                        <li>Planificación de extracción en canteras</li>
+                        <li>Minimización de costos de transporte</li>
+                    </ul>
+                    
+                    <p>La solución obtenida permite al ingeniero:</p>
+                    <ul>
+                        <li>Planificar la logística de extracción</li>
+                        <li>Optimizar los costos de transporte</li>
+                        <li>Cumplir con las especificaciones técnicas</li>
+                        <li>Minimizar el desperdicio de materiales</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="text-align: center;">
+            <h2>Resolver Otro Sistema</h2>
+            <p>¿Tienes otro sistema de ecuaciones que necesitas resolver?</p>
+            <button class="btn" onclick="location.reload()">Resolver Nuevamente</button>
+            <button class="btn" onclick="scrollToTop()">Volver al Inicio</button>
+        </div>
+        
+        <footer>
+            <p>Solución del Problema de Ingeniería Civil - Mezcla de Canteras</p>
+            <p>Métodos Numéricos I - <span class="neon-text">UMSA</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Gráfico 3D de los planos
+        function create3DPlot() {
+            // Punto de solución
+            const x1 = 4011.63, x2 = 7162.79, x3 = 5125.58;
+            
+            // Rango para los ejes
+            const range = 8000;
+            const step = 1000;
+            
+            // Generar datos para el plano 1: 0.52x + 0.20y + 0.25z = 4800
+            let plane1X = [], plane1Y = [], plane1Z = [];
+            for (let x = 0; x <= range; x += step) {
+                for (let y = 0; y <= range; y += step) {
+                    if (0.52*x + 0.20*y <= 4800) {
+                        plane1X.push(x);
+                        plane1Y.push(y);
+                        plane1Z.push((4800 - 0.52*x - 0.20*y) / 0.25);
+                    }
+                }
+            }
+            
+            // Generar datos para el plano 2: 0.30x + 0.50y + 0.20z = 5810
+            let plane2X = [], plane2Y = [], plane2Z = [];
+            for (let x = 0; x <= range; x += step) {
+                for (let y = 0; y <= range; y += step) {
+                    if (0.30*x + 0.50*y <= 5810) {
+                        plane2X.push(x);
+                        plane2Y.push(y);
+                        plane2Z.push((5810 - 0.30*x - 0.50*y) / 0.20);
+                    }
+                }
+            }
+            
+            // Generar datos para el plano 3: 0.18x + 0.30y + 0.55z = 5690
+            let plane3X = [], plane3Y = [], plane3Z = [];
+            for (let x = 0; x <= range; x += step) {
+                for (let y = 0; y <= range; y += step) {
+                    if (0.18*x + 0.30*y <= 5690) {
+                        plane3X.push(x);
+                        plane3Y.push(y);
+                        plane3Z.push((5690 - 0.18*x - 0.30*y) / 0.55);
+                    }
+                }
+            }
+            
+            const trace1 = {
+                x: plane1X, y: plane1Y, z: plane1Z,
+                type: 'mesh3d',
+                opacity: 0.7,
+                color: '#0ff0fc',
+                name: 'Ecuación 1: Arena'
+            };
+            
+            const trace2 = {
+                x: plane2X, y: plane2Y, z: plane2Z,
+                type: 'mesh3d',
+                opacity: 0.7,
+                color: '#ff00ff',
+                name: 'Ecuación 2: Grano Fino'
+            };
+            
+            const trace3 = {
+                x: plane3X, y: plane3Y, z: plane3Z,
+                type: 'mesh3d',
+                opacity: 0.7,
+                color: '#39ff14',
+                name: 'Ecuación 3: Grano Grueso'
+            };
+            
+            const trace4 = {
+                x: [x1], y: [x2], z: [x3],
+                mode: 'markers',
+                marker: {
+                    size: 8,
+                    color: '#ffffff',
+                    symbol: 'diamond'
+                },
+                name: 'Solución'
+            };
+            
+            const layout = {
+                title: 'Sistema de Ecuaciones en 3D - Intersección de Planos',
+                scene: {
+                    xaxis: { title: 'Cantera 1 (x₁)', range: [0, range] },
+                    yaxis: { title: 'Cantera 2 (x₂)', range: [0, range] },
+                    zaxis: { title: 'Cantera 3 (x₃)', range: [0, range] },
+                    bgcolor: 'rgba(10,10,22,0)'
+                },
+                paper_bgcolor: 'rgba(10,10,22,0)',
+                plot_bgcolor: 'rgba(10,10,22,0)',
+                font: { color: '#ffffff' }
+            };
+            
+            Plotly.newPlot('plot3d', [trace1, trace2, trace3, trace4], layout);
+        }
+        
+        // Gráfico de torta para distribución
+        function createPieChart() {
+            const data = [{
+                values: [4011.63, 7162.79, 5125.58],
+                labels: ['Cantera 1', 'Cantera 2', 'Cantera 3'],
+                marker: {
+                    colors: ['#0ff0fc', '#ff00ff', '#39ff14']
+                },
+                type: 'pie',
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent',
+                hole: 0.4
+            }];
+            
+            const layout = {
+                title: 'Distribución de Extracción por Cantera',
+                paper_bgcolor: 'rgba(10,10,22,0)',
+                plot_bgcolor: 'rgba(10,10,22,0)',
+                font: { color: '#ffffff' },
+                showlegend: true
+            };
+            
+            Plotly.newPlot('plotPie', data, layout);
+        }
+        
+        // Función para volver al inicio
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Inicializar gráficos cuando la página cargue
+        window.onload = function() {
+            create3DPlot();
+            createPieChart();
+        };
+    </script>
+</body>
+</html>
